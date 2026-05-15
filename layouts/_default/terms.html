@@ -1,0 +1,37 @@
+{{ define "main" }}
+
+<div class="tags-page">
+
+    <div class="section-heading">
+
+        <div class="hero-badge">
+            Taxonomy
+        </div>
+
+        <h1>{{ .Title }}</h1>
+
+    </div>
+
+    <div class="tags-container">
+
+        {{ range .Data.Terms.Alphabetical }}
+
+        <a class="tag-item" href="{{ .Page.RelPermalink }}">
+
+            <span class="tag-name">
+                {{ .Page.Title }}
+            </span>
+
+            <span class="tag-count">
+                {{ .Count }}
+            </span>
+
+        </a>
+
+        {{ end }}
+
+    </div>
+
+</div>
+
+{{ end }}

@@ -1,0 +1,96 @@
+{{ define "main" }}
+
+<header class="writeups-hero">
+
+    <div class="hero-badge">
+        Offensive Security Research
+    </div>
+
+    <h1>{{ .Title }}</h1>
+
+    <p>
+        {{ .Description }}
+    </p>
+
+    <div class="hero-stats">
+
+        <div class="hero-stat">
+            <span class="stat-icon">
+                <img src="/images/windows.png" alt="Windows">
+            </span>
+
+            <span class="stat-label">
+                Windows
+            </span>
+        </div>
+
+        <div class="hero-stat">
+            <span class="stat-icon">
+                <img src="/images/linux.png" alt="Linux">
+            </span>
+
+            <span class="stat-label">
+                Linux
+            </span>
+        </div>
+
+        <div class="hero-stat">
+            <span class="stat-icon">
+                <img src="/images/classification.png" alt="Active Directory">
+            </span>
+
+            <span class="stat-label">
+                Active Directory
+            </span>
+        </div>
+
+    </div>
+
+    </div>
+
+</header>
+
+<div class="writeups-grid">
+
+    {{ range .Pages }}
+
+    <article class="writeup-card">
+
+        <a href="{{ .RelPermalink }}" class="writeup-link">
+
+            <div class="writeup-top">
+                <div class="writeup-difficulty {{ lower .Params.difficulty }}">
+                    {{ .Params.difficulty }}
+                </div>
+                {{ with .Params.image }}
+                <img class="machine-image" src="{{ . }}" alt="{{ $.Title }}">
+                {{ end }}
+            </div>
+
+            <h2>
+                {{ .Title }}
+            </h2>
+
+            <p>
+                {{ .Description }}
+            </p>
+
+            <div class="writeup-tags">
+
+                {{ range .Params.tags }}
+
+                <span>{{ . }}</span>
+
+                {{ end }}
+
+            </div>
+
+        </a>
+
+    </article>
+
+    {{ end }}
+
+</div>
+
+{{ end }}

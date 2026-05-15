@@ -1,0 +1,41 @@
+{{ define "main" }}
+
+<div class="error-container">
+
+    <div class="error-content">
+        <span class="error-code">404</span>
+
+        <h1>Target Not Found</h1>
+
+        <p>
+            The requested resource does not exist or has been moved.
+        </p>
+
+        <div class="terminal-box">
+            <span class="terminal-prefix">root@0xM4IX:~$</span>
+            <span class="terminal-command">
+                locate <span id="missing-path"></span>
+            </span>
+
+            <div class="terminal-output">
+                No results found.
+            </div>
+        </div>
+
+        <div class="error-buttons">
+            <a href="/" class="error-btn primary-btn">
+                Return Home
+            </a>
+
+            <a href="/writeups/" class="error-btn secondary-btn">
+                Browse Writeups
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    const path = decodeURIComponent(window.location.pathname);
+
+    document.getElementById("missing-path").textContent = path;
+</script>
+{{ end }}

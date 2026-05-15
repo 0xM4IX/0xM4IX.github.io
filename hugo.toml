@@ -1,0 +1,51 @@
+baseURL = "https://0xm4ix.github.io/"
+languageCode = 'en-us'
+title = '0xM4lX'
+theme = 'PaperMod'
+
+[pagination]
+  pagerSize = 10
+
+[taxonomies]
+tag = "tags"
+category = "categories"
+
+[params]
+  defaultTheme = 'dark'
+  disableThemeToggle = true
+  ShowCodeCopyButtons = true
+  ShowReadingTime = false
+  ShowBreadCrumbs = false
+  ShowPostNavLinks = false
+  ShowToc = true
+  TocOpen = true
+  hideFooter = true
+  enableRobotsTXT = true
+[params.homeInfoParams]
+  Title = "Welcome to 0xM4lX's blog"
+  Content = "Windows, Linux, and Active Directory Exploitation • Offensive Security Research"
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    lineNos = false
+    style = 'monokai'
+
+[[menu.main]]
+  identifier = 'home'
+  name = 'Home'
+  url = '/'
+  weight = 10
+[[menu.main]]
+  identifier = 'writeups'
+  name = 'Writeups'
+  url = '/writeups/'
+  weight = 20
+
+[[menu.main]]
+  identifier = 'tags'
+  name = 'Tags'
+  url = '/tags/'
+  weight = 30
+[outputs]
+home = ["HTML", "RSS", "JSON"]
