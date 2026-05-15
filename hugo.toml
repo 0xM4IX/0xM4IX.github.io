@@ -39,7 +39,7 @@ keywords = [
 
 [params]
   env = "production"
-
+  googleSiteVerification = "HUOi3kV0BGjetvJNds2IXa5LAsGbgrOGDs6mmICQSq0"
   defaultTheme = "dark"
   disableThemeToggle = true
 
