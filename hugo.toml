@@ -117,3 +117,7 @@
 
   [outputs]
     home = ["HTML", "RSS", "JSON"]
+[markup.tableOfContents]
+startLevel = 1
+endLevel = 3
+ordered = false

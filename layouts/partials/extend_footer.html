@@ -1,0 +1,33 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.querySelector(".toc-toggle");
+    const toc = document.querySelector(".floating-toc");
+
+    if (toggle) {
+        toggle.style.opacity = "1";
+    }
+
+    if (toggle && toc) {
+
+        toggle.addEventListener("click", function (e) {
+
+            e.stopPropagation();
+
+            toc.classList.toggle("active");
+        });
+
+        toc.addEventListener("click", function (e) {
+
+            e.stopPropagation();
+        });
+
+        document.addEventListener("click", function () {
+
+            toc.classList.remove("active");
+        });
+
+    }
+
+});
+</script>
