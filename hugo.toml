@@ -1,12 +1,41 @@
-  baseURL = "https://0xm4ix.github.io/"
-  languageCode = "en-us"
-  title = "0xM4IX"
-  theme = "PaperMod"
-  author = "0xM4IX"
+baseURL = "https://0xm4ix.github.io/"
+# canonifyURLs removed — it was breaking sitemap XML structure
+languageCode = "en-us"
+title = "0xM4IX | HTB Writeups & Offensive Security Research"
+theme = "PaperMod"
+author = "0xM4IX"
 
-  enableRobotsTXT = true
-  enableEmoji = true
-  
+enableRobotsTXT = true
+enableEmoji = true
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+  filename = "sitemap.xml"
+
+[pagination]
+  pagerSize = 10
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+[params]
+  env = "production"
+  googleSiteVerification = "HUOi3kV0BGjetvJNds2IXa5LAsGbgrOGDs6mmICQSq0"
+  defaultTheme = "dark"
+  disableThemeToggle = true
+
+  ShowCodeCopyButtons = true
+  ShowReadingTime = true
+  ShowBreadCrumbs = true
+  ShowPostNavLinks = true
+  ShowToc = true
+  TocOpen = true
+
+  hideFooter = true
+
+  description = "Offensive security research, Active Directory abuse, HTB writeups, privilege escalation, vulnerability research and real-world exploitation methodologies."
 
   keywords = [
     "Hack The Box",
@@ -14,110 +43,64 @@
     "Active Directory",
     "AD CS",
     "Privilege Escalation",
-    "Red Team",
     "Windows Exploitation",
     "Linux Exploitation",
-    "CVE",
-    "Offensive Security",
-    "Kerberoasting",
-    "BloodHound",
-    "Windows PrivEsc",
-    "Linux PrivEsc",
-    "Cybersecurity"
+    "CVE",  
+    "Red Team",
+    "Offensive Security"
   ]
 
-  [sitemap]
-    changefreq = "weekly"
-    priority = 0.5
-    filename = "sitemap.xml"
+  author = "0xM4IX"
 
-  [pagination]
-    pagerSize = 10
+[params.homeInfoParams]
+  Title = "Windows, Linux & Active Directory Exploitation"
+  Content = "Technical writeups, Active Directory abuse, privilege escalation, CVE analysis, vulnerability research and offensive security methodologies focused on real-world attack chains."
 
-  [taxonomies]
-    tag = "tags"
-    category = "categories"
+[params.assets]
+  disableHLJS = false
+  favicon = "/favicon.ico"
+  favicon16x16 = "/favicon-16x16.png"
+  favicon32x32 = "/favicon-32x32.png"
+  apple_touch_icon = "/apple-touch-icon.png"
 
-  [params]
-    env = "production"
-    googleSiteVerification = "HUOi3kV0BGjetvJNds2IXa5LAsGbgrOGDs6mmICQSq0"
-    defaultTheme = "dark"
-    disableThemeToggle = true
+[params.cover]
+  hidden = false
+  hiddenInList = false
+  hiddenInSingle = false
 
-    ShowCodeCopyButtons = true
-    ShowReadingTime = true
-    ShowBreadCrumbs = true
-    ShowPostNavLinks = true
-    ShowToc = true
-    TocOpen = true
+[markup]
+  [markup.highlight]
+    noClasses = false
+    lineNos = false
+    lineNumbersInTable = false
+    style = "monokai"
 
-    hideFooter = true
+  [markup.goldmark.renderer]
+    unsafe = true
 
-    description = "Offensive security research, Active Directory abuse, HTB writeups, privilege escalation, vulnerability research and real-world exploitation methodologies."
+  # Moved inside [markup] — was incorrectly placed outside before
+  [markup.tableOfContents]
+    startLevel = 1
+    endLevel = 3
+    ordered = false
 
-    keywords = [
-      "Hack The Box",
-      "HTB",
-      "Active Directory",
-      "AD CS",
-      "Privilege Escalation",
-      "Windows Exploitation",
-      "Linux Exploitation",
-      "CVE",
-      "Red Team",
-      "Offensive Security"
-    ]
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
 
-    author = "0xM4IX"
+[[menu.main]]
+  identifier = "home"
+  name = "Home"
+  url = "/"
+  weight = 10
 
-  [params.homeInfoParams]
-    Title = "Windows, Linux & Active Directory Exploitation"
+[[menu.main]]
+  identifier = "writeups"
+  name = "Writeups"
+  url = "/writeups/"
+  weight = 20
 
-    Content = "Technical writeups, Active Directory abuse, privilege escalation, CVE analysis, vulnerability research and offensive security methodologies focused on real-world attack chains."
-
-  [params.assets]
-    disableHLJS = false
-    favicon = "/favicon.ico"
-    favicon16x16 = "/favicon-16x16.png"
-    favicon32x32 = "/favicon-32x32.png"
-    apple_touch_icon = "/apple-touch-icon.png"
-
-  [params.cover]
-    hidden = false
-    hiddenInList = false
-    hiddenInSingle = false
-
-  [markup]
-    [markup.highlight]
-      noClasses = false
-      lineNos = false
-      lineNumbersInTable = false
-      style = "monokai"
-
-    [markup.goldmark.renderer]
-      unsafe = true
-
-  [[menu.main]]
-    identifier = "home"
-    name = "Home"
-    url = "/"
-    weight = 10
-
-  [[menu.main]]
-    identifier = "writeups"
-    name = "Writeups"
-    url = "/writeups/"
-    weight = 20
-
-  [[menu.main]]
-    identifier = "tags"
-    name = "Tags"
-    url = "/tags/"
-    weight = 30
-
-  [outputs]
-    home = ["HTML", "RSS", "JSON"]
-[markup.tableOfContents]
-startLevel = 1
-endLevel = 3
-ordered = false
+[[menu.main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/tags/"
+  weight = 30
