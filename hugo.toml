@@ -1,7 +1,7 @@
 baseURL = "https://0xm4ix.github.io/"
 # canonifyURLs removed — it was breaking sitemap XML structure
 languageCode = "en-us"
-title = "0xM4IX | HTB Writeups & Offensive Security Research"
+title = "0xM4IX | HTB Writeups"
 theme = "PaperMod"
 author = "0xM4IX"
 
