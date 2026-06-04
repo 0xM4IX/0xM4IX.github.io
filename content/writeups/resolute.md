@@ -391,16 +391,4 @@ The machine also reinforces the importance of:
 - restricting administrative capabilities
 - monitoring PowerShell activity inside enterprise environments
 
-# Mitigations
-
-Several defensive measures could have prevented this compromise chain:
-
-- Disable anonymous RPC enumeration
-- Enforce strong password policies
-- Remove passwords from account description fields
-- Restrict WinRM access
-- Disable unnecessary PowerShell transcription logging exposure
-- Audit delegated administrative groups regularly
-- Restrict DnsAdmins membership
-- Monitor suspicious DNS service configuration changes
-
+---

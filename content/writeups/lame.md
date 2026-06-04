@@ -233,16 +233,3 @@ Lame is an excellent beginner machine because it introduces the importance of:
 The machine also highlights the risks of running outdated and vulnerable services in production environments.
 
 ---
-
-# Mitigations
-
-Several defensive measures could have prevented this compromise:
-
-- Keep Samba and FTP services updated
-- Remove unsupported software versions
-- Restrict unnecessary network exposure
-- Monitor for suspicious SMB activity
-- Disable anonymous FTP access where unnecessary
-- Apply security patches regularly
-
----

@@ -402,19 +402,3 @@ Blackfield demonstrates how multiple small Active Directory weaknesses can be ch
 The machine highlights the dangers of privilege delegation and insecure credential handling in enterprise Active Directory environments.
 
 ---
-
-# Mitigations
-
-Several defensive measures could have prevented this compromise chain:
-
-- Disable anonymous SMB enumeration
-- Enforce Kerberos pre-authentication
-- Apply strong password policies
-- Audit Active Directory ACL permissions regularly
-- Restrict ForceChangePassword delegations
-- Protect and monitor LSASS memory dumps
-- Limit Backup Operators group membership
-- Restrict WinRM access
-- Monitor registry hive access attempts
-
----

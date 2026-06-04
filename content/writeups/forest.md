@@ -344,16 +344,3 @@ Forest is an excellent introductory Active Directory machine because it demonstr
 The machine also highlights the dangers of excessive delegated permissions and insecure Active Directory configurations inside enterprise environments.
 
 ---
-
-# Mitigations
-
-Several defensive measures could have prevented this compromise chain:
-
-- Disable anonymous RPC enumeration
-- Enforce Kerberos pre-authentication for all accounts
-- Regularly audit Active Directory ACLs
-- Restrict Exchange-related delegated permissions
-- Monitor DCSync-related replication requests
-- Limit WinRM access to administrative users only
-
----
