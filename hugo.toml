@@ -101,9 +101,9 @@ keywords = [
   ordered = false
 
 [[menu.main]]
-  identifier = "home"
-  name = "Home"
-  url = "/"
+  identifier = "posts"
+  name = "Posts"
+  url = "/posts"
   weight = 10
 
 [[menu.main]]
@@ -117,12 +117,17 @@ keywords = [
   name = "Tags"
   url = "/tags/"
   weight = 30
-
+[[menu.main]]
+  identifier = "about"
+  name = "About Me"
+  url = "/about/"
+  weight = 40
+    
 [[menu.main]]
   identifier = "vulns"
   name = "Vulnerability Research "
   url = "https://vulns-0xm4ix.github.io"
-  weight = 40
+  weight = 50
   [menu.main.params]
     external = true
     target = "_blank"

@@ -5,7 +5,6 @@ description: "Abusing exposed SMB shares, MSSQL credentials, NTLM capture, and c
 platform: "Hack The Box"
 image: "/images/querier.png"
 difficulty: "Medium"
-date: 2026-05-24
 draft: false
 
 tags:

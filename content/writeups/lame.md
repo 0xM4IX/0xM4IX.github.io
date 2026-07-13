@@ -5,7 +5,6 @@ description: "Linux service enumeration and exploitation of vulnerable Samba ser
 platform: "Hack The Box"
 image: "/images/lame.png"
 difficulty: "Easy"
-date: 2026-05-24
 draft: false
 
 tags:

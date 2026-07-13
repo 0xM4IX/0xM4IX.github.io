@@ -5,7 +5,6 @@ description: "Abusing Group Policy Preferences credentials and Kerberoasting to 
 platform: "Hack The Box"
 image: "/images/active.png"
 difficulty: "Easy"
-date: 2026-05-24
 draft: false
 
 tags:

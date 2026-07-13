@@ -1,7 +1,6 @@
 {{- define "main" }}
-
+<div id="reading-progress"></div>
 <article class="post-single">
-
     <header class="post-header">
 
         <h1 class="entry-hint-parent">
@@ -131,9 +130,9 @@
     {{- if (.Param "comments") }}
 
     {{- partial "comments.html" . }}
-
     {{- end }}
 
 </article>
-
+{{ $progress := resources.Get "js/reading-progress.js" | js.Build }}
+<script src="{{ $progress.RelPermalink }}"></script>
 {{- end }}

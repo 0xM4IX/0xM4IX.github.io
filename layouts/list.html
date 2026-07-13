@@ -12,6 +12,8 @@
         {{ .Description }}
     </p>
 
+    {{ if eq .Section "writeups" }}
+
     <div class="hero-stats">
 
         <div class="hero-stat">
@@ -46,7 +48,7 @@
 
     </div>
 
-    </div>
+    {{ end }}
 
 </header>
 
@@ -59,31 +61,30 @@
         <a href="{{ .RelPermalink }}" class="writeup-link">
 
             <div class="writeup-top">
-                <div class="writeup-difficulty {{ lower .Params.difficulty }}">
-                    {{ .Params.difficulty }}
+
+                {{ with .Params.difficulty }}
+                <div class="writeup-difficulty {{ lower . }}">
+                    {{ . }}
                 </div>
+                {{ end }}
+
                 {{ with .Params.image }}
                 <img class="machine-image" src="{{ . }}" alt="{{ $.Title }}">
                 {{ end }}
+
             </div>
 
-            <h2>
-                {{ .Title }}
-            </h2>
+            <h2>{{ .Title }}</h2>
 
-            <p>
-                {{ .Description }}
-            </p>
+            <p>{{ .Description }}</p>
 
+            {{ with .Params.tags }}
             <div class="writeup-tags">
-
-                {{ range .Params.tags }}
-
+                {{ range . }}
                 <span>{{ . }}</span>
-
                 {{ end }}
-
             </div>
+            {{ end }}
 
         </a>
 

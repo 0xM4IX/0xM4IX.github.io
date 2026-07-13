@@ -5,7 +5,6 @@ description: "Active Directory enumeration, password spraying, WinRM access, Pow
 platform: "Hack The Box"
 image: "/images/resolute.png"
 difficulty: "Medium"
-date: 2026-05-24
 draft: false
 
 tags:
