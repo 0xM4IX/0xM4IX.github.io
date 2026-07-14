@@ -1,5 +1,5 @@
 ---
-title: "My CPTS Exam Experience (Both Attempts)"
+title: "My CPTS Exam Experience (2 Attempts)"
 description: "My journey through the Certified Penetration Testing Specialist (CPTS) exam, including lessons learned from two attempts and what ultimately helped me succeed."
 author: "0xM4IX"
 image: "/images/cpts.png"
