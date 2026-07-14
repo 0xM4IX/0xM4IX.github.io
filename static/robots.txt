@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow:
 
 Sitemap: https://0xm4ix.github.io/sitemap.xml
