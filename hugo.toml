@@ -5,7 +5,7 @@ title = "0xM4IX"
 theme = "PaperMod"
 author = "0xM4IX"
 
-enableRobotsTXT = true
+enableRobotsTXT = false
 enableEmoji = true
 
 keywords = [
