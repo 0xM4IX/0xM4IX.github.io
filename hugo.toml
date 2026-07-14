@@ -43,6 +43,7 @@ keywords = [
   googleSiteVerification = "HUOi3kV0BGjetvJNds2IXa5LAsGbgrOGDs6mmICQSq0"
   defaultTheme = "dark"
   disableThemeToggle = true
+  images = ["images/social-image.png"]
 
   ShowCodeCopyButtons = true
   ShowReadingTime = true
