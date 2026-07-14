@@ -3,7 +3,8 @@ title: "Hack The Box - Lame - Writeup"
 description: "Linux service enumeration and exploitation of vulnerable Samba services on Hack The Box Lame."
 
 platform: "Hack The Box"
-image: "/images/lame.png"
+images:
+  - "/images/lame.png"
 difficulty: "Easy"
 draft: false
 

@@ -1,82 +1,60 @@
 {{ define "main" }}
 
 <div class="hero-intro">
+  <span class="hero-badge"> Offensive Security Research </span>
 
-    <span class="hero-badge">
-        Offensive Security Research
-    </span>
+  <h1>
+    Windows, Linux & Active Directory Exploitation
+    <span class="cursor"></span>
+  </h1>
 
-    <h1>
-        Windows, Linux & Active Directory Exploitation
-        <span class="cursor"></span>
-    </h1>
-
-    <p>
-        Technical writeups, privilege escalation techniques, Active Directory abuse,
-        and real-world offensive security research focused on HackTheBox,
-        CTF environments, and red team methodologies.
-    </p>
-
+  <p>
+    Technical writeups, privilege escalation techniques, Active Directory abuse,
+    and real-world offensive security research focused on HackTheBox, CTF
+    environments, and red team methodologies.
+  </p>
 </div>
 
 <section class="featured-writeups">
+  <div class="section-heading">
+    <div class="hero-badge">Featured Content</div>
 
-    <div class="section-heading">
+    <h2>Latest Writeups</h2>
+  </div>
 
-        <div class="hero-badge">
-            Featured Content
+  <div class="writeups-grid">
+    {{ range first 3 (where site.RegularPages "Section" "writeups") }}
+
+    <article class="writeup-card">
+      <div class="writeup-top">
+        <div class="writeup-difficulty {{ lower .Params.difficulty }}">
+          {{ .Params.difficulty }}
         </div>
 
-        <h2>Latest Writeups</h2>
+        {{ with .Params.images }}
+        <img class="machine-image" src="{{ index . 0 }}" alt="{{ $.Title }}" />
+        {{ else }} {{ with .Params.image }}
+        <img class="machine-image" src="{{ . }}" alt="{{ $.Title }}" />
+        {{ end }} {{ end }}
+      </div>
 
-    </div>
+      <a class="writeup-link" href="{{ .RelPermalink }}">
+        <h2>{{ .Title }}</h2>
 
-    <div class="writeups-grid">
+        <p>{{ .Description }}</p>
 
-        {{ range first 3 (where site.RegularPages "Section" "writeups") }}
+        <div class="writeup-tags">
+          {{ range .Params.tags }}
 
-        <article class="writeup-card">
+          <span>{{ . }}</span>
 
-            <div class="writeup-top">
+          {{ end }}
+        </div>
+      </a>
+    </article>
 
-                <div class="writeup-difficulty {{ lower .Params.difficulty }}">
-                    {{ .Params.difficulty }}
-                </div>
-
-                {{ with .Params.image }}
-                <img class="machine-image" src="{{ . }}" alt="{{ $.Title }}">
-                {{ end }}
-
-            </div>
-
-            <a class="writeup-link" href="{{ .RelPermalink }}">
-
-                <h2>
-                    {{ .Title }}
-                </h2>
-
-                <p>
-                    {{ .Description }}
-                </p>
-
-                <div class="writeup-tags">
-
-                    {{ range .Params.tags }}
-
-                    <span>{{ . }}</span>
-
-                    {{ end }}
-
-                </div>
-
-            </a>
-
-        </article>
-
-        {{ end }}
-
-    </div>
-
+    {{ end }}
+  </div>
 </section>
 
 {{ end }}
