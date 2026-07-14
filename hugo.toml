@@ -1,5 +1,5 @@
-baseURL = "https://0xm4ix.github.io/"
-canonifyURLs = true 
+baseURL = "https://0xm4ix.com/"
+canonifyURLs = true
 languageCode = "en-us"
 title = "0xM4IX"
 theme = "PaperMod"
