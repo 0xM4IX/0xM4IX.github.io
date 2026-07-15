@@ -18,6 +18,14 @@ draft: false
 ShowReadingTime: false
 ---
 
+![Certified Penetration Testing Specialist (CPTS) Certificate](/images/cpts-cert.png)
+
+> Successfully passed the Hack The Box Certified Penetration Testing Specialist (CPTS) certification after two exam attempts.
+
+---
+
+# Introduction
+
 # Introduction
 
 The **Certified Penetration Testing Specialist (CPTS)** is one of the most practical penetration testing certifications available today. This post summarizes my experience across two exam attempts, the mistakes I made, and the lessons I learned along the way.

@@ -1542,7 +1542,6 @@ html {
     right: 100px;
 
     width: 320px;
-
     max-height: 72vh;
 
     overflow-y: auto;
@@ -1726,15 +1725,12 @@ html {
 @keyframes articleFade {
     from {
         opacity: 0;
-        transform: translateY(18px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
-
 /* ========================================================== */
 
 .post-content {
