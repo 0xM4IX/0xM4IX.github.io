@@ -26,8 +26,6 @@ ShowReadingTime: false
 
 # Introduction
 
-# Introduction
-
 The **Certified Penetration Testing Specialist (CPTS)** is one of the most practical penetration testing certifications available today. This post summarizes my experience across two exam attempts, the mistakes I made, and the lessons I learned along the way.
 
 > **Disclaimer:** This post does not contain exam spoilers or confidential information. It only shares my personal experience and general advice.
