@@ -123,15 +123,6 @@ keywords = [
   name = "About Me"
   url = "/about/"
   weight = 40
-    
-[[menu.main]]
-  identifier = "vulns"
-  name = "Vulnerability Research "
-  url = "https://vulns-0xm4ix.github.io"
-  weight = 50
-  [menu.main.params]
-    external = true
-    target = "_blank"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
