@@ -1,0 +1,30 @@
+{{- $pages := slice -}}
+
+{{- range where site.RegularPages "Section" "in" (slice "posts" "writeups") -}}
+
+    {{- $title := .Title -}}
+
+    {{- if eq .Section "writeups" -}}
+        {{- $title = replace $title "Hack The Box - " "" -}}
+        {{- $title = replace $title " - Writeup" "" -}}
+    {{- end -}}
+
+    {{- $image := "" -}}
+    {{- with .Params.images }}
+        {{- $image = index . 0 }}
+    {{- end }}
+
+    {{- $pages = $pages | append (dict
+        "title" $title
+        "type" .Section
+        "permalink" .RelPermalink
+        "description" (.Description | default "")
+        "platform" (.Params.platform | default "")
+        "difficulty" (.Params.difficulty | default "")
+        "tags" (.Params.tags | default (slice))
+        "image" $image
+    ) -}}
+
+{{- end }}
+
+{{- $pages | jsonify }}

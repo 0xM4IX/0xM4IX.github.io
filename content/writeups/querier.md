@@ -3,7 +3,8 @@ title: "Hack The Box - Querier - Writeup"
 description: "Abusing exposed SMB shares, MSSQL credentials, NTLM capture, and credential discovery to compromise Querier."
 
 platform: "Hack The Box"
-image: "/images/querier.png"
+images: 
+  - "/images/querier.png"
 difficulty: "Medium"
 draft: false
 

@@ -1,103 +1,138 @@
-import Fuse from 'fuse.js';
-const searchInput = document.getElementById("search-input");
-const searchResults = document.getElementById("search-results");
-let fuse;
-let allPages = [];
+import Fuse from "fuse.js";
 
-async function initSearch() {
+document.addEventListener("DOMContentLoaded", async () => {
+  const button = document.getElementById("search-toggle");
+  const modal = document.getElementById("search-modal");
+  const overlay = document.getElementById("search-overlay");
+  const input = document.getElementById("search-input");
+  const results = document.getElementById("search-results");
 
+  if (!button || !modal || !overlay || !input || !results) {
+    console.error("Search elements are missing.");
+    return;
+  }
+
+  let fuse;
+
+  try {
     const response = await fetch("/index.json");
 
-    allPages = await response.json();
+    if (!response.ok) {
+      throw new Error(`Failed to load index.json (${response.status})`);
+    }
 
-    fuse = new Fuse(allPages, {
-        keys: [
-            "title",
-            "platform",
-            "difficulty"
-        ],
-        threshold: 0.35
+    const pages = await response.json();
+
+    fuse = new Fuse(pages, {
+      includeScore: true,
+      threshold: 0.35,
+      ignoreLocation: true,
+      keys: [
+        { name: "title", weight: 0.6 },
+        { name: "tags", weight: 0.25 },
+        { name: "description", weight: 0.15 },
+      ],
     });
-}
+  } catch (err) {
+    console.error(err);
+    return;
+  }
 
-initSearch();
+  function openSearch() {
+    modal.style.display = "flex";
+    overlay.style.display = "block";
 
-searchInput.addEventListener("input", () => {
+    input.focus();
+  }
 
+  function closeSearch() {
+    modal.style.display = "none";
+    overlay.style.display = "none";
 
-    const query = searchInput.value.trim();
+    input.value = "";
+    results.innerHTML = "";
+  }
+
+  button.addEventListener("click", openSearch);
+
+  overlay.addEventListener("click", closeSearch);
+
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      openSearch();
+    }
+
+    if (e.key === "Escape") {
+      closeSearch();
+    }
+  });
+
+  input.addEventListener("input", () => {
+    const query = input.value.trim();
+
+    console.log(query);
 
     if (!query) {
-
-        searchResults.classList.remove("active");
-        searchResults.innerHTML = "";
-
-        return;
+      results.innerHTML = "";
+      return;
     }
 
-    const results = fuse.search(query);
+    const matches = fuse.search(query);
 
-    console.log(results);
-    
-
-    if (results.length === 0) {
-
-        searchResults.innerHTML = `
-            <div class="search-empty">
-                No machines found.
-            </div>
-        `;
-
-        searchResults.classList.add("active");
-
-        return;
-    }
-
-    searchResults.innerHTML = results.map(result => {
-
-        const item = result.item;
-
-     return `
-        <a class="search-result" href="${item.permalink}">
-
-            <div class="search-machine-info">
-
-                <div class="search-machine-title">
-                    ${item.title.replace(" - Writeup", "")}
+    if (!matches.length) {
+      results.innerHTML = `
+                <div class="search-empty">
+                    No results found.
                 </div>
-
-                <div class="search-machine-meta">
-                    ${item.platform} • ${item.difficulty}
-                </div>
-
-            </div>
-
-            <img
-                class="search-machine-image"
-                src="${item.image}"
-                alt="${item.title}"
-            >
-
-        </a>
-        `;
-
-    }).join("");
-
-    searchResults.classList.add("active");
-});
-
-searchInput.addEventListener("focus", () => {
-
-    if (searchInput.value.trim() !== "") {
-
-        searchResults.classList.add("active");
+            `;
+      return;
     }
-});
 
-document.addEventListener("click", (e) => {
+    results.innerHTML = matches
+      .map(({ item }) => {
+        return `
+                <a class="search-result ${item.type}" href="${item.permalink}">
 
-    if (!e.target.closest(".search-wrapper")) {
+                    ${
+                      item.type === "writeups"
+                        ? `<img class="search-thumb" src="${item.image}" alt="${item.title}">`
+                        : `
+        <div class="search-post-icon">
+            📝
+        </div>
+        `
+                    }
 
-        searchResults.classList.remove("active");
-    }
+                    <div class="search-content">
+
+                        <h3>${item.title}</h3>
+
+                        <div class="search-meta">
+
+                            ${
+                              item.platform
+                                ? `<span>${item.platform}</span>`
+                                : `<span>${item.type}</span>`
+                            }
+
+                            ${
+                              item.difficulty
+                                ? `<span class="badge">${item.difficulty}</span>`
+                                : ""
+                            }
+
+                        </div>
+
+                        ${item.description ? `<p>${item.description}</p>` : ""}
+
+                    </div>
+
+                </a>
+            `;
+      })
+      .join("");
+  });
+
+  closeSearch();
 });

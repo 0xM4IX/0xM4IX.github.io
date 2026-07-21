@@ -3,7 +3,8 @@ title: "Hack The Box - Active - Writeup"
 description: "Abusing Group Policy Preferences credentials and Kerberoasting to compromise an Active Directory domain on Hack The Box Active."
 
 platform: "Hack The Box"
-image: "/images/active.png"
+images: 
+  - "/images/active.png"
 difficulty: "Easy"
 draft: false
 

@@ -11,6 +11,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "fuse.js": "^7.3.0"
+    "fuse.js": "^7.5.0"
   }
 }

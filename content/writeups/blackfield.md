@@ -3,7 +3,8 @@ title: "Hack The Box - Blackfield - Writeup"
 description: "Anonymous SMB enumeration, AS-REP Roasting, ForceChangePassword abuse, LSASS credential extraction, Backup Operators abuse, and privilege escalation on Hack The Box Blackfield."
 
 platform: "Hack The Box"
-image: "/images/blackfield.png"
+images: 
+  - "/images/blackfield.png"
 difficulty: "Hard"
 draft: false
 

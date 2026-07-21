@@ -3,7 +3,8 @@ title: "Hack The Box - Forest - Writeup"
 description: "Anonymous RPC enumeration, AS-REP Roasting, BloodHound privilege analysis, ACL abuse, and DCSync exploitation on HackTheBox Forest."
 
 platform: "Hack The Box"
-image: "/images/forest.png"
+images:
+ - "/images/forest.png"
 difficulty: "Easy"
 draft: false
 

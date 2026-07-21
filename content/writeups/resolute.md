@@ -3,7 +3,8 @@ title: "Hack The Box - Resolute - Writeup"
 description: "Active Directory enumeration, password spraying, WinRM access, PowerShell transcript credential discovery, and DnsAdmins privilege escalation on Hack The Box Resolute."
 
 platform: "Hack The Box"
-image: "/images/resolute.png"
+images: 
+  - "/images/resolute.png"
 difficulty: "Medium"
 draft: false
 
